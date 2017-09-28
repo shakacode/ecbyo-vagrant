@@ -1,0 +1,4 @@
+- src: jdauphant.nginx
+- src: itcraftsmanpl.php7
+- src: geerlingguy.mysql
+- src: geerlingguy.docker

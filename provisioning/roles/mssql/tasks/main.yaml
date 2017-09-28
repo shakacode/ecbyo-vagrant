@@ -1,0 +1,41 @@
+---
+- name: Remove mssql container
+  docker_container:
+    name: mssql
+    image: microsoft/mssql-server-linux:ctp2-1
+    state: absent
+    
+- name: Create mssql container
+  docker_container:
+    name: mssql
+    image: microsoft/mssql-server-linux:ctp2-1
+    state: present
+    command: /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'sdt45gdsFa' -Q 'ALTER LOGIN SA WITH PASSWORD="sdt45gdsFaq"'
+    env:
+        ACCEPT_EULA: Y
+        MSSQL_SA_PASSWORD: sdt45gdsFa
+        MSSQL_PID: Developer
+    ports:
+     - "1401:1433"
+
+- name: Start mssql container
+  docker_container:
+    name: mssql
+    image: microsoft/mssql-server-linux:ctp2-1
+    state: started
+    env:
+        ACCEPT_EULA: Y
+        MSSQL_SA_PASSWORD: sdt45gdsFaq
+        MSSQL_PID: Developer
+    ports:
+     - "1401:1433"
+
+- name: sleep for 15 seconds and continue with play
+  wait_for: timeout=15
+  delegate_to: localhost
+
+- name: Copy db into container
+  command: docker cp /var/www/ecbyo_sc.bak mssql:/var/opt/mssql/data
+
+- name: Restore encbyo_db
+  command: docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'sdt45gdsFaq' -Q "RESTORE DATABASE ecbyo_sc FROM DISK='/var/opt/mssql/data/ecbyo_sc.bak' WITH MOVE 'ecbyo_sc' TO '/var/opt/mssql/data/ecbyo_sc.mdf', MOVE 'ecbyo_sc_log' TO '/var/opt/mssql/data/ecbyo_sc_log.ldf'"

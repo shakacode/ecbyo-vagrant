@@ -1,0 +1,6 @@
+.vagrant
+ecbyo
+*.log
+*.bak
+html
+.DS_Store
