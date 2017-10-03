@@ -30,6 +30,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
     config.vm.network "private_network", ip: "192.168.33.33"
+    config.vm.hostname = "ubuntu"
 
     # Create a public network, which generally matched to bridged network.
     # Bridged networks make the machine appear as another physical device on
@@ -82,6 +83,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     $script = <<SCRIPT
         sudo apt-get install software-properties-common -y
         sudo apt-add-repository ppa:ansible/ansible -y
+        curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-tools.list
         sudo apt-get update -y
         sudo apt-get install ansible -y
         sudo apt-get install python-pip -y

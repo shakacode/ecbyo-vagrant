@@ -1,14 +1,64 @@
 ---
+- name: Install mssql-tools
+  apt:
+      name: mssql-tools
+      state: present
+      allow_unauthenticated: yes
+  environment:
+    ACCEPT_EULA: Y
+
+- name: Install unixodbc-dev
+  apt:
+      name: unixodbc-dev
+      state: present
+      allow_unauthenticated: yes
+
+- name: Add {{mssql_tools_path}} to path
+  lineinfile:
+    dest: /etc/environment
+    state: present
+    backrefs: yes
+    regexp: 'PATH=(["]*)((?!.*?{{mssql_tools_path}}).*?)(["]*)$'
+    line: 'PATH=\1\2:{{mssql_tools_path}}\3'
+
+- name: Install sqlsrv
+  pear:
+    name: pecl/sqlsrv
+    state: present
+
+- name: Install pdo_sqlsrv
+  pear:
+    name: pecl/pdo_sqlsrv
+    state: present
+
+- name: Add pdo_sqlsrv to php.ini
+  lineinfile:
+    path: /etc/php/7.1/fpm/php.ini
+    line: 'extension=pdo_sqlsrv.so'
+    state: present
+  notify:
+    - restart nginx
+    - restart fpm
+
+- name: Add sqlsrv to php.ini
+  lineinfile:
+    path: /etc/php/7.1/fpm/php.ini
+    line: 'extension=sqlsrv.so'
+    state: present
+  notify:
+    - restart nginx
+    - restart fpm
+
 - name: Remove mssql container
   docker_container:
     name: mssql
-    image: microsoft/mssql-server-linux:ctp2-1
+    image: microsoft/mssql-server-linux:2017-latest
     state: absent
     
 - name: Create mssql container
   docker_container:
     name: mssql
-    image: microsoft/mssql-server-linux:ctp2-1
+    image: microsoft/mssql-server-linux:2017-latest
     state: present
     command: /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'sdt45gdsFa' -Q 'ALTER LOGIN SA WITH PASSWORD="sdt45gdsFaq"'
     env:
@@ -21,7 +71,7 @@
 - name: Start mssql container
   docker_container:
     name: mssql
-    image: microsoft/mssql-server-linux:ctp2-1
+    image: microsoft/mssql-server-linux:2017-latest
     state: started
     env:
         ACCEPT_EULA: Y

@@ -42,9 +42,13 @@ php_packages:
   - php7.1-dev
   - php7.1-mysql
   - php-pear
+  - php7.1-mcrypt
 
 php_opcache_enable: 0
 php_use_managed_ini: true
 php_max_execution_time: "3600"
 php_memory_limit: "512M"
+
+
+mssql_tools_path: "/opt/mssql-tools/bin"
 

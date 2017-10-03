@@ -12,6 +12,7 @@
     - python-mysqldb
     - python-psycopg2
     - unzip
+    - mcrypt
 
 - name: remove apache2
   apt: pkg=apache2 state=removed
@@ -20,4 +21,5 @@
 
 - name: pip modules
   pip:
-    name: docker-py
+    name: 
+      - docker-py
