@@ -1,6 +1,6 @@
 # ecbyo vagrant
 
-1. Clone that repo
+1. Clone this repo
 2. Clone this repo https://github.com/ivacationonline/ecbyo alongside of Vagrantfile
 3. Place db backup alongside of Vagrantfile. The name of the dump file must be `ecbyo_sc.bak`
 4. `vagrant up` (hostmanager may ask you the root password for adding ecbyo.local to /etc/hosts)
